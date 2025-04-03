@@ -46,10 +46,10 @@ io.on("connection", (socket) => {
     socket.emit('ai response', response)
   });
 
-  // socket.on('abort agent execution', async (msg) => {
-  //   const aborted = agentExecutionManager.abortExecution(msg.threadId);
-  //   console.log('abort result:', aborted);
-  // }); CLIENT API DOESN'T SUPPORT STREAMING ABORT
+  socket.on('abort agent execution', async (msg) => {
+    const aborted = agentExecutionManager.abortExecution(msg.threadId);
+    console.log('abort result:', aborted);
+  }); 
 
   socket.on('disconnect', () => {
     console.log('socket', socket.id, 'disconnected');

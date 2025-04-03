@@ -2,8 +2,7 @@ import type { AiResponse, Message } from "~/types/chat";
 import { ChatMessageList } from "~/components/ui/chat/chat-message-list";
 import { ChatInput } from "~/components/ui/chat/chat-input";
 import { Button } from "~/components/ui/button";
-import { DotFilledIcon, LapTimerIcon, PaperPlaneIcon } from "@radix-ui/react-icons";
-// import { useFetcher } from "@remix-run/react";
+import { DotFilledIcon, LapTimerIcon, PaperPlaneIcon, StopIcon } from "@radix-ui/react-icons";
 import { useEffect, useRef, useState } from "react";
 import type { Socket } from "socket.io-client";
 import { v4 as uuid } from 'uuid'
@@ -19,7 +18,6 @@ export default function Chat({
 }: ChatProps) {
   const threadId = "123";
   const userId = "user-1";
-  // const abortFetcher = useFetcher();
   const [input, setInput] = useState("");
   const [shownMessages, setShownMessages] = useState<Message[]>(messages);
   // Track current response ID to handle streaming updates
@@ -120,10 +118,10 @@ export default function Chat({
   };
 
 
-  //Function to abort the agent execution. CLIENT API DOESN'T SUPPORT STREAMING ABORT
-  // const handleAbort = () => {
-  //   socket?.emit('abort agent execution', { threadId });
-  // };
+  //Function to abort the agent execution.
+  const handleAbort = () => {
+    socket?.emit('abort agent execution', { threadId });
+  };
   
   return (
     <div className="flex flex-col justify-between w-full h-screen">
@@ -137,7 +135,6 @@ export default function Chat({
               } mb-4`}
             >
              
-
               <div
                 className={`max-w-[80%] rounded-lg p-4  ${
                   message.role === "assistant"
@@ -168,7 +165,7 @@ export default function Chat({
             disabled={isWaitingForResponse.current}
           />
 
-          {/* {isWaitingForResponse.current === true ? (
+          {isWaitingForResponse.current ? (
             <Button 
               type="button" 
               size="icon" 
@@ -179,16 +176,16 @@ export default function Chat({
             >
               <StopIcon className="h-4 w-4" />
             </Button>
-          ) : ( */}
+          ) : (
             <Button 
               type="submit" 
               size="icon" 
               className="shrink-0" 
-              disabled={!input.trim() || isWaitingForResponse.current === true}
+              disabled={!input.trim() || isWaitingForResponse.current}
             >
-              {isWaitingForResponse.current === true ? <LapTimerIcon className="h-4 w-4" /> : <PaperPlaneIcon className="h-4 w-4" />}
+              {isWaitingForResponse.current ? <LapTimerIcon className="h-4 w-4" /> : <PaperPlaneIcon className="h-4 w-4" />}
             </Button>
-          {/* )} */}
+           )} 
         </form>
       </div>
     </div>

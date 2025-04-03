@@ -3,7 +3,7 @@ import type { AiResponse } from '~/types/chat';
 import { mastraClient } from '~/lib/mastra';
 import { compareResponsesAndGetResult, removeTags } from './removeTags';
 
-// Store for active agent executions by thread ID. CLIENT API DOESN'T SUPPORT ABORT
+// Store for active agent executions by thread ID.
 class AgentExecutionManager {
   private static instance: AgentExecutionManager;
   private activeExecutions: Map<string, AbortController> = new Map();
@@ -63,7 +63,7 @@ export const agentExecutionManager = AgentExecutionManager.getInstance();
 export async function executeWeatherAgent(input: string, threadId: string, resourceId: string, socket: Socket<DefaultEventsMap>, responseId: string): Promise<AiResponse> {
   try {    
     // Create an abort controller for this execution
-    // const abortController = agentExecutionManager.createController(threadId); CLIENT API DOESN'T SUPPORT ABORT
+    const abortController = agentExecutionManager.createController(threadId);
 
     const weatherAgent = mastraClient.getAgent('weatherAgent');
    
@@ -74,7 +74,7 @@ export async function executeWeatherAgent(input: string, threadId: string, resou
       memoryOptions: {
         workingMemory: { enabled: true },
       },
-      // signal: abortController.signal, CLIENT API DOESN'T SUPPORT ABORT
+      // abortSignal: abortController.signal,
       // onFinish: () => {}, CLIENT API DOESN'T SUPPORT onFinish option
     });
    

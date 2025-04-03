@@ -5,10 +5,25 @@ import { io } from "socket.io-client";
 import { useEffect , useState } from "react";
 import type { Socket } from "socket.io-client";
 import { mastraClient } from "~/lib/mastra";
-
+import { loadDataFromUrl } from "~/services/dataLoaderFromUrl";
+import { processTextIntoChunks } from "~/services/processDocsIntoChunks";
+import { loadDataFromPDFWithPDF2JSON } from "~/services/dataLoadFromPDF";
+import { extractImagesFromURL } from "~/services/extractImagesFromPDF";
 export async function loader() {
   const threadId = "123";
   const resourceId = "user-1";
+
+
+
+  const text = await loadDataFromUrl();
+  const images = await extractImagesFromURL('https://www.npmjs.com/package/cheerio');
+  const chunksFromUrl = await processTextIntoChunks(text);
+  console.log('CHUNK 1 >>>>', chunksFromUrl[0]);
+
+  const textFromPDF = await loadDataFromPDFWithPDF2JSON();
+  const chunksFromPDF = await processTextIntoChunks(textFromPDF.text);
+  console.log('CHUNK 2 >>>>', chunksFromPDF[0]);
+
 
   const existingThread = await mastraClient.getMemoryThread(threadId, 'weatherAgent');
 
