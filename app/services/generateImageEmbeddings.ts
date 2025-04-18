@@ -15,6 +15,7 @@ const validateToken = () => {
   return token;
 };
 
+// GENERATE EMBEDDING FOR IMAGE DESCRIPTION
 export const generateEmbedding = async (imagePath: string) => {
   // const API_URL = 'https://api-inference.huggingface.co/models/openai/clip-vit-base-patch32';
   const token = validateToken();
@@ -33,12 +34,21 @@ export const generateEmbedding = async (imagePath: string) => {
 
 // await generateEmbedding('public/images/interior/#Limited #Minimalist #Designgames #Write #Living -1744806813107.jpg');
 
-export const generateImageEmbedding = async () => {
- const image_feature_extractor = await pipeline('image-feature-extraction', 'Xenova/vit-base-patch16-224-in21k');
-const url = 'https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/cats.png';
-const features = await image_feature_extractor(url);
 
-console.log('Embedding vector:', features);
+// GENERATE EMBEDDING DIRECTLY FOR IMAGE FROM URL
+export const generateImageEmbedding = async (url = 'https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/cats.png'): Promise<number[]> => {
+  const image_feature_extractor = await pipeline('image-feature-extraction', 'Xenova/vit-base-patch16-224-in21k', { dtype: 'fp32' });
+  
+  // FROM URL
+  const features = await image_feature_extractor(url);
+
+  const vectorArray = features.ort_tensor.data as Float32Array;
+
+  const clsToken = Array.from(vectorArray.slice(0, 768));
+
+  console.log('Embedding vector:', clsToken);
+
+  return clsToken;
 }
 
-await generateImageEmbedding()
+// await generateImageEmbedding()

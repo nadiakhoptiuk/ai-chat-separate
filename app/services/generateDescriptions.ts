@@ -1,7 +1,8 @@
 import fs from 'fs';
-import { extractImagesFromURL } from './extractImagesFromURL';
+// import { extractImagesFromURL } from './extractImagesFromURL';
 import dotenv from 'dotenv';
 import path from 'path';
+import { pipeline } from '@huggingface/transformers';
 
 dotenv.config({ path: './.env.development' });
 
@@ -14,6 +15,7 @@ const validateToken = () => {
   return token;
 };
 
+// GENERATE DESCRIPTIONS FOR A SINGLE LOCAL IMAGE
 export const generateDescription = async (imagePath: string) => {
   const API_URL = 'https://api-inference.huggingface.co/models/nlpconnect/vit-gpt2-image-captioning'
 
@@ -57,19 +59,13 @@ export const generateDescription = async (imagePath: string) => {
   }
 }
 
-// FOR TASK EXECUTION
-// tsx app/services/generateDescriptions.ts
-// await extractImagesFromURL('https://decormatters.com/blog/what-is-my-interior-design-style-14-popular-options', 'interior')
-
- 
-//  https://www.warrenphotographic.co.uk/00525-puppy-and-red-guinea-pig
-
 
 const saveDescriptionsToFile = async (descriptions: {fileName: string, description: string}[], fileName: string) => {
   const destinationPath = path.join(process.cwd(), 'public', 'data', `descriptions-${fileName}.json`);
   fs.writeFileSync(destinationPath, JSON.stringify(descriptions));
 }
 
+// GENERATE DESCRIPTIONS FOR ALL IMAGES IN A FOLDER
 const generateAllImagesDescriptions = async (fileName: string) => {
   const publicFolderPath = path.join(process.cwd(), "public");
   const folderPath = path.join(publicFolderPath, 'images', fileName);
@@ -89,4 +85,27 @@ const generateAllImagesDescriptions = async (fileName: string) => {
 }
 
 
-generateAllImagesDescriptions('interior');
+// generateAllImagesDescriptions('interior');
+
+
+//ERROR IN MODEL TYPE //TODO: FIX
+// export const generateImageDescription = async (url = 'https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/cats.png'): Promise<number[]> => {
+//   const image_caption_generator = await pipeline('image-to-text', 'onnx-community/mgp-str-base');
+  
+//   // FROM URL
+//   const features = await image_caption_generator(url);
+
+//   // FROM FILE
+//   // const imageBuffer = fs.readFileSync(imagePath);
+//   // const features = await image_feature_extractor([imageBuffer]);
+
+//   // const vectorArray = features.ort_tensor.data as Float32Array;
+
+//   // const clsToken = Array.from(vectorArray.slice(0, 768));
+
+//   console.log('features:', features);
+
+//   return features;
+// }
+
+// generateImageDescription()

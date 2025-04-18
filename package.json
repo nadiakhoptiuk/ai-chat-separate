@@ -16,6 +16,7 @@
     "@huggingface/inference": "^3.8.0",
     "@huggingface/transformers": "^3.4.2",
     "@mastra/client-js": "^0.1.13",
+    "@mastra/qdrant": "^0.2.9",
     "@mastra/rag": "^0.1.14",
     "@mozilla/readability": "^0.4.1",
     "@radix-ui/react-avatar": "^1.1.3",
